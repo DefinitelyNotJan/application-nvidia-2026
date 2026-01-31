@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Jan Lönnqvist / Graphic Design Generalist / NVIDIA</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111111;
+            --surface2: #161616;
+            --border: rgba(255,255,255,0.06);
+            --green: #76B900;
+            --green-dim: rgba(118,185,0,0.12);
+            --green-glow: rgba(118,185,0,0.5);
+            --text: #e5e5e5;
+            --dim: rgba(255,255,255,0.4);
+            --rgb-speed: 6s;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ── RGB ANIMATION ── */
+        @keyframes rgbCycle {
+            0%   { color: #ff0040; }
+            16%  { color: #ff8000; }
+            33%  { color: #ffff00; }
+            50%  { color: #00ff80; }
+            66%  { color: #00bfff; }
+            83%  { color: #8000ff; }
+            100% { color: #ff0040; }
+        }
+        @keyframes rgbBorder {
+            0%   { border-color: #ff0040; box-shadow: 0 0 20px rgba(255,0,64,0.2); }
+            16%  { border-color: #ff8000; box-shadow: 0 0 20px rgba(255,128,0,0.2); }
+            33%  { border-color: #ffff00; box-shadow: 0 0 20px rgba(255,255,0,0.2); }
+            50%  { border-color: #00ff80; box-shadow: 0 0 20px rgba(0,255,128,0.2); }
+            66%  { border-color: #00bfff; box-shadow: 0 0 20px rgba(0,191,255,0.2); }
+            83%  { border-color: #8000ff; box-shadow: 0 0 20px rgba(128,0,255,0.2); }
+            100% { border-color: #ff0040; box-shadow: 0 0 20px rgba(255,0,64,0.2); }
+        }
+        @keyframes rgbGlow {
+            0%   { text-shadow: 0 0 40px rgba(255,0,64,0.4), 0 0 80px rgba(255,0,64,0.15); }
+            16%  { text-shadow: 0 0 40px rgba(255,128,0,0.4), 0 0 80px rgba(255,128,0,0.15); }
+            33%  { text-shadow: 0 0 40px rgba(255,255,0,0.4), 0 0 80px rgba(255,255,0,0.15); }
+            50%  { text-shadow: 0 0 40px rgba(0,255,128,0.4), 0 0 80px rgba(0,255,128,0.15); }
+            66%  { text-shadow: 0 0 40px rgba(0,191,255,0.4), 0 0 80px rgba(0,191,255,0.15); }
+            83%  { text-shadow: 0 0 40px rgba(128,0,255,0.4), 0 0 80px rgba(128,0,255,0.15); }
+            100% { text-shadow: 0 0 40px rgba(255,0,64,0.4), 0 0 80px rgba(255,0,64,0.15); }
+        }
+        @keyframes rgbBg {
+            0%   { background: #ff0040; }
+            16%  { background: #ff8000; }
+            33%  { background: #ffff00; }
+            50%  { background: #00ff80; }
+            66%  { background: #00bfff; }
+            83%  { background: #8000ff; }
+            100% { background: #ff0040; }
+        }
+        @keyframes rgbGradient {
+            0%   { background: linear-gradient(90deg, #ff0040, #ff8000, #ffff00); }
+            33%  { background: linear-gradient(90deg, #ffff00, #00ff80, #00bfff); }
+            66%  { background: linear-gradient(90deg, #00bfff, #8000ff, #ff0040); }
+            100% { background: linear-gradient(90deg, #ff0040, #ff8000, #ffff00); }
+        }
+
+        /* ── RGB LIGHT STRIPS ── */
+        .rgb-strip-top, .rgb-strip-bottom {
+            position: fixed;
+            left: 0;
+            right: 0;
+            height: 2px;
+            z-index: 500;
+            animation: rgbBg var(--rgb-speed) linear infinite;
+        }
+        .rgb-strip-top { top: 0; }
+        .rgb-strip-bottom { bottom: 0; }
+        .rgb-strip-left, .rgb-strip-right {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            z-index: 500;
+            animation: rgbBg var(--rgb-speed) linear infinite;
+        }
+        .rgb-strip-left { left: 0; animation-delay: -1.5s; }
+        .rgb-strip-right { right: 0; animation-delay: -3s; }
+
+        /* ── SCANLINES ── */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.03) 2px,
+                rgba(0,0,0,0.03) 4px
+            );
+        }
+
+        /* ── GRID BG ── */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.03;
+            background-image:
+                linear-gradient(rgba(118,185,0,0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(118,185,0,0.3) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .hero-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+        .hero-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            animation: rgbCycle var(--rgb-speed) linear infinite;
+            margin-bottom: 28px;
+            opacity: 0;
+            animation: rgbCycle var(--rgb-speed) linear infinite, fadeUp 0.6s 0.2s ease forwards;
+        }
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(42px, 8vw, 110px);
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 1;
+            letter-spacing: -1px;
+            margin-bottom: 28px;
+        }
+        .hero-title .line {
+            display: block;
+            opacity: 0;
+            transform: translateY(50px) scaleY(1.3);
+        }
+        .hero-title .line:nth-child(1) { animation: heroSlam 0.6s 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .hero-title .line:nth-child(2) { animation: heroSlam 0.6s 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .hero-title .line:nth-child(3) { animation: heroSlam 0.6s 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes heroSlam {
+            to { opacity: 1; transform: translateY(0) scaleY(1); }
+        }
+        .hero-title .nv-green {
+            color: var(--green);
+            text-shadow: 0 0 30px var(--green-glow), 0 0 60px rgba(118,185,0,0.2);
+        }
+        .hero-title .rgb-text {
+            animation: rgbGlow var(--rgb-speed) linear infinite;
+        }
+        .hero-sub {
+            font-size: 15px;
+            color: var(--dim);
+            max-width: 540px;
+            margin: 0 auto;
+            line-height: 1.7;
+            opacity: 0;
+            animation: fadeUp 0.6s 0.8s ease forwards;
+        }
+        .hero-sub .hl {
+            color: var(--green);
+        }
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 48px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        .hero-scroll-chevron {
+            width: 20px;
+            height: 20px;
+            border-right: 2px solid var(--green);
+            border-bottom: 2px solid var(--green);
+            transform: rotate(45deg);
+            animation: chevronBounce 1.5s ease-in-out infinite;
+            box-shadow: 2px 2px 8px var(--green-glow);
+        }
+        @keyframes chevronBounce {
+            0%, 100% { transform: rotate(45deg) translateY(0); opacity: 1; }
+            50% { transform: rotate(45deg) translateY(8px); opacity: 0.3; }
+        }
+
+        /* ── GPU SPEC BAR ── */
+        .spec-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+        .spec-item {
+            padding: 36px 32px;
+            text-align: center;
+            border-right: 1px solid var(--border);
+            transition: background 0.3s;
+        }
+        .spec-item:last-child { border-right: none; }
+        .spec-item:hover { background: var(--green-dim); }
+        .spec-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 6px;
+            text-shadow: 0 0 20px var(--green-glow);
+        }
+        .spec-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--dim);
+        }
+
+        /* ── ABOUT (split panel) ── */
+        .about-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+        .about-left {
+            padding: 120px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+        .about-left::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 10%;
+            bottom: 10%;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, var(--green), transparent);
+            opacity: 0.2;
+        }
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 20px;
+        }
+        .about-left h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(28px, 3.5vw, 44px);
+            font-weight: 700;
+            text-transform: uppercase;
+            line-height: 1.15;
+            margin-bottom: 24px;
+        }
+        .about-left p {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--dim);
+            max-width: 460px;
+        }
+        .about-right {
+            padding: 120px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 24px;
+            background: var(--surface);
+        }
+        .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-icon {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--bg);
+            background: var(--green);
+            padding: 8px 12px;
+            min-width: 48px;
+            text-align: center;
+            box-shadow: 0 0 16px var(--green-glow);
+        }
+        .stat-info h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .stat-info p {
+            font-size: 12px;
+            color: var(--dim);
+            line-height: 1.5;
+        }
+
+        /* ── RGB MARQUEE ── */
+        .rgb-marquee {
+            padding: 24px 0;
+            overflow: hidden;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+        .rgb-marquee-track {
+            display: inline-flex;
+            white-space: nowrap;
+            animation: marqueeScroll 20s linear infinite;
+        }
+        .rgb-marquee-track.reverse { animation-direction: reverse; }
+        .rgb-marquee-track span {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(28px, 5vw, 60px);
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 0 28px;
+        }
+        .rgb-marquee-track span.outline {
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255,255,255,0.06);
+        }
+        .rgb-marquee-track span.rgb {
+            animation: rgbCycle var(--rgb-speed) linear infinite;
+            opacity: 0.15;
+        }
+        @keyframes marqueeScroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        /* ── AI NATIVE ── */
+        .ai-section {
+            padding: 160px 60px;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .ai-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 700;
+            text-transform: uppercase;
+            line-height: 1.15;
+            margin-bottom: 20px;
+            max-width: 700px;
+        }
+        .ai-section > p {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--dim);
+            max-width: 560px;
+            margin-bottom: 60px;
+        }
+        .ai-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+        }
+        .ai-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 40px 28px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+        .ai-card:hover {
+            border-color: transparent;
+            animation: rgbBorder var(--rgb-speed) linear infinite;
+        }
+        .ai-card .card-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 48px;
+            font-weight: 900;
+            color: rgba(255,255,255,0.02);
+            position: absolute;
+            top: 16px;
+            right: 16px;
+        }
+        .ai-card h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            color: var(--green);
+        }
+        .ai-card p {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--dim);
+        }
+
+        /* ── WHY NVIDIA ── */
+        .why-section {
+            padding: 160px 60px;
+            position: relative;
+            z-index: 1;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .why-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 700;
+            text-transform: uppercase;
+            line-height: 1.15;
+            margin-bottom: 64px;
+            max-width: 500px;
+        }
+        .why-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2px;
+        }
+        .why-card {
+            background: var(--bg);
+            padding: 48px 36px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+        .why-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--green);
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .why-card:hover::before { transform: scaleY(1); }
+        .why-card:hover { background: rgba(118,185,0,0.03); }
+        .why-card .num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+        .why-card h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .why-card p {
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--dim);
+        }
+
+        /* ── CASE / DHL ── */
+        .case-section {
+            padding: 160px 60px;
+            position: relative;
+            z-index: 1;
+        }
+        .case-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(24px, 3.5vw, 40px);
+            font-weight: 700;
+            text-transform: uppercase;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+        .case-section > p {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--dim);
+            max-width: 560px;
+            margin-bottom: 48px;
+        }
+        .case-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+        }
+        .case-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 36px 28px;
+            transition: border-color 0.3s;
+        }
+        .case-card:hover { border-color: var(--green-dim); }
+        .case-card h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--green);
+            margin-bottom: 12px;
+        }
+        .case-card p {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--dim);
+        }
+
+        /* ── EXPERIENCE ── */
+        .exp-section {
+            padding: 160px 60px;
+            position: relative;
+            z-index: 1;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+        }
+        .exp-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(24px, 3.5vw, 40px);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 64px;
+        }
+        .exp-grid {
+            max-width: 900px;
+        }
+        .exp-row {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 32px;
+            padding: 28px 0;
+            border-bottom: 1px solid var(--border);
+            align-items: start;
+        }
+        .exp-row:last-child { border-bottom: none; }
+        .exp-year {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--green);
+            letter-spacing: 1px;
+        }
+        .exp-role {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .exp-company {
+            font-size: 12px;
+            color: var(--dim);
+            margin-bottom: 8px;
+        }
+        .exp-desc {
+            font-size: 13px;
+            line-height: 1.6;
+            color: rgba(255,255,255,0.25);
+        }
+
+        /* ── SKILLS ── */
+        .skills-section {
+            padding: 100px 60px;
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 32px;
+        }
+        .skill-chip {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            padding: 10px 18px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            transition: all 0.3s;
+            cursor: default;
+        }
+        .skill-chip:hover {
+            border-color: var(--green);
+            background: var(--green-dim);
+            color: var(--green);
+            box-shadow: 0 0 16px var(--green-glow);
+        }
+
+        /* ── INFO BAR ── */
+        .info-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+        .info-item {
+            padding: 44px 36px;
+            border-right: 1px solid var(--border);
+        }
+        .info-item:last-child { border-right: none; }
+        .info-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--dim);
+            margin-bottom: 8px;
+        }
+        .info-value {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .info-sub {
+            font-size: 12px;
+            color: var(--dim);
+            margin-top: 4px;
+        }
+
+        /* ── CTA ── */
+        .cta-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .cta-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(40px, 8vw, 100px);
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 1;
+            margin-bottom: 24px;
+        }
+        .cta-section h2 .rgb-glow {
+            animation: rgbGlow var(--rgb-speed) linear infinite, rgbCycle var(--rgb-speed) linear infinite;
+        }
+        .cta-section p {
+            font-size: 14px;
+            color: var(--dim);
+            margin-bottom: 40px;
+            max-width: 420px;
+        }
+        .cta-btn {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            padding: 18px 52px;
+            background: var(--green);
+            color: var(--bg);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+            box-shadow: 0 0 24px var(--green-glow);
+        }
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 40px var(--green-glow);
+        }
+
+        /* ── AI BADGE ── */
+        .ai-badge {
+            position: fixed;
+            bottom: 16px;
+            left: 16px;
+            z-index: 400;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: var(--dim);
+            background: rgba(0,0,0,0.9);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .ai-badge .pulse {
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 8px var(--green-glow);
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 60px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: rgba(255,255,255,0.15);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── REVEALS ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* ── PARALLAX ── */
+        .parallax-el {
+            transition: transform 0.05s linear;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .about-section { grid-template-columns: 1fr; }
+            .about-left { padding: 80px 24px; }
+            .about-left::after { display: none; }
+            .about-right { padding: 60px 24px; }
+            .spec-bar { grid-template-columns: 1fr 1fr; }
+            .ai-section, .case-section, .exp-section { padding: 100px 24px; }
+            .why-section { padding: 100px 24px; }
+            .skills-section { padding: 80px 24px; }
+            .ai-grid, .case-cards { grid-template-columns: 1fr; }
+            .why-cards { grid-template-columns: 1fr; }
+            .exp-row { grid-template-columns: 1fr; gap: 4px; }
+            .info-bar { grid-template-columns: 1fr; }
+            .info-item { border-right: none; border-bottom: 1px solid var(--border); }
+            footer { padding: 20px 24px; flex-direction: column; gap: 8px; }
+            .cta-section { min-height: auto; padding: 120px 24px; }
+            .rgb-strip-left, .rgb-strip-right { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── RGB STRIPS ── -->
+<div class="rgb-strip-top"></div>
+<div class="rgb-strip-bottom"></div>
+<div class="rgb-strip-left"></div>
+<div class="rgb-strip-right"></div>
+
+<!-- ── SCANLINES ── -->
+<div class="scanlines"></div>
+
+<!-- ── GRID BG ── -->
+<div class="grid-bg"></div>
+
+<!-- ── AI BADGE ── -->
+<div class="ai-badge">
+    <div class="pulse"></div>
+    Built with AI / Human + Machine
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero">
+    <canvas class="hero-particles" id="particleCanvas"></canvas>
+    <div class="hero-content">
+        <div class="hero-tag">Application / NVIDIA / Graphic Design Generalist</div>
+        <h1 class="hero-title">
+            <span class="line nv-green">Graphic</span>
+            <span class="line rgb-text">Design</span>
+            <span class="line">Generalist</span>
+        </h1>
+        <p class="hero-sub">8+ years in campaign design, motion, DTP, and multi-market production. <span class="hl">AI-native workflow</span>. Built for high-volume creative at the speed NVIDIA demands.</p>
+    </div>
+    <div class="hero-scroll"><div class="hero-scroll-chevron"></div></div>
+</section>
+
+<!-- ── GPU SPEC BAR ── -->
+<div class="spec-bar">
+    <div class="spec-item reveal">
+        <div class="spec-value">8+</div>
+        <div class="spec-label">Years Active</div>
+    </div>
+    <div class="spec-item reveal">
+        <div class="spec-value">12+</div>
+        <div class="spec-label">Markets</div>
+    </div>
+    <div class="spec-item reveal">
+        <div class="spec-value">100s</div>
+        <div class="spec-label">Assets</div>
+    </div>
+    <div class="spec-item reveal">
+        <div class="spec-value">AI</div>
+        <div class="spec-label">Workflow</div>
+    </div>
+</div>
+
+<!-- ── RGB MARQUEE ── -->
+<div class="rgb-marquee">
+    <div class="rgb-marquee-track" id="marquee1">
+        <span class="outline">Design</span><span class="rgb">Motion</span><span class="outline">3D</span><span class="rgb">Brand</span><span class="outline">Campaign</span><span class="rgb">AI</span><span class="outline">Video</span><span class="rgb">Scale</span>
+        <span class="outline">Design</span><span class="rgb">Motion</span><span class="outline">3D</span><span class="rgb">Brand</span><span class="outline">Campaign</span><span class="rgb">AI</span><span class="outline">Video</span><span class="rgb">Scale</span>
+    </div>
+</div>
+
+<!-- ── ABOUT ── -->
+<section class="about-section" id="about">
+    <div class="about-left">
+        <div class="section-label reveal-left">About</div>
+        <h2 class="reveal-left">Designer.<br>Motion Maker.<br>AI-Native.</h2>
+        <p class="reveal-left">I'm Jan, a designer from Finland based in the Netherlands with a partner in San Francisco / I'm there regularly. 8+ years across campaign design, motion graphics, brand systems, DTP, and multi-market creative production for brands like DHL, Rituals, HelloFresh, IKEA, and GLS. AI-augmented workflow using Midjourney, ChatGPT, and generative tools in production.</p>
+    </div>
+    <div class="about-right">
+        <div class="stat-row reveal">
+            <div class="stat-icon">01</div>
+            <div class="stat-info">
+                <h4>Brand Systems at Scale</h4>
+                <p>DHL across 12+ European markets. Rituals across seasonal campaigns. Coherent visual systems, scaled fast.</p>
+            </div>
+        </div>
+        <div class="stat-row reveal">
+            <div class="stat-icon">02</div>
+            <div class="stat-info">
+                <h4>Motion + Video</h4>
+                <p>After Effects, Premiere, motion design. Animated campaigns for GLS and HVO including digital out-of-home content.</p>
+            </div>
+        </div>
+        <div class="stat-row reveal">
+            <div class="stat-icon">03</div>
+            <div class="stat-info">
+                <h4>AI-Generated Production</h4>
+                <p>Created a full GLS social campaign with AI-generated models via Midjourney. Zero photography budget, full creative output.</p>
+            </div>
+        </div>
+        <div class="stat-row reveal">
+            <div class="stat-icon">04</div>
+            <div class="stat-info">
+                <h4>Print + Digital + Spatial</h4>
+                <p>Deep DTP roots. Print production, packaging, retail, digital, social. I work across every format.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── AI NATIVE ── -->
+<section class="ai-section" id="aiSection">
+    <div class="section-label reveal-left">AI-Native Creative</div>
+    <h2 class="reveal-left">AI isn't a tool<br>I adopted. It's how<br>I work.</h2>
+    <p class="reveal">My partner works in AI. I'm immersed in the technology, the product thinking, and the frontier daily. Every project starts with AI before touching Adobe or Figma. This page was designed and built through human-AI collaboration.</p>
+    <div class="ai-grid">
+        <div class="ai-card reveal">
+            <div class="card-num">01</div>
+            <h4>Generative Production</h4>
+            <p>GLS social campaign with fully AI-generated models via Midjourney. Eliminated photography costs while maintaining brand quality at scale.</p>
+        </div>
+        <div class="ai-card reveal">
+            <div class="card-num">02</div>
+            <h4>AI-Built Application</h4>
+            <p>This page was architected and coded through human-AI collaboration. Creative direction, copy, code, and deployment / all through conversational AI workflow.</p>
+        </div>
+        <div class="ai-card reveal">
+            <div class="card-num">03</div>
+            <h4>Research Proximity</h4>
+            <p>My partner works in AI. I understand the technology behind the tools / not just the interface. Models, capabilities, limitations, product implications.</p>
+        </div>
+        <div class="ai-card reveal">
+            <div class="card-num">04</div>
+            <h4>Concept Acceleration</h4>
+            <p>Using AI for rapid concept exploration, copy iteration, and design system documentation. Focus time on creative decisions, not production bottlenecks.</p>
+        </div>
+        <div class="ai-card reveal">
+            <div class="card-num">05</div>
+            <h4>Multi-Format Scaling</h4>
+            <p>AI-assisted workflows that turn one hero asset into dozens of platform-specific deliverables. Templating, adaptation, and format optimization at speed.</p>
+        </div>
+        <div class="ai-card reveal">
+            <div class="card-num">06</div>
+            <h4>Embedded in the Ecosystem</h4>
+            <p>I follow NVIDIA, OpenAI, Anthropic, and the broader AI landscape daily. I understand product launches, developer culture, and the visual language of tech.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ── RGB MARQUEE 2 ── -->
+<div class="rgb-marquee">
+    <div class="rgb-marquee-track reverse" id="marquee2">
+        <span class="rgb">NVIDIA</span><span class="outline">Physical AI</span><span class="rgb">Robotics</span><span class="outline">Digital Twins</span><span class="rgb">GPU</span><span class="outline">Compute</span><span class="rgb">Accelerate</span><span class="outline">Render</span>
+        <span class="rgb">NVIDIA</span><span class="outline">Physical AI</span><span class="rgb">Robotics</span><span class="outline">Digital Twins</span><span class="rgb">GPU</span><span class="outline">Compute</span><span class="rgb">Accelerate</span><span class="outline">Render</span>
+    </div>
+</div>
+
+<!-- ── WHY NVIDIA ── -->
+<section class="why-section" id="whySection">
+    <div class="section-label reveal-left">Why NVIDIA</div>
+    <h2 class="reveal-left">The company that<br>powers everything.</h2>
+    <div class="why-cards">
+        <div class="why-card reveal">
+            <div class="num">01</div>
+            <h4>Brand at the Center of AI</h4>
+            <p>NVIDIA's brand communicates raw computational power and future possibility. Physical AI, digital twins, robotics / the visual identity needs to match the ambition. I want to build that.</p>
+        </div>
+        <div class="why-card reveal">
+            <div class="num">02</div>
+            <h4>Generalist = My Career</h4>
+            <p>Campaign design, motion, DTP, illustration, video, social, print, packaging. I've never been a specialist / I'm the person who does everything, fast, across every format the brief demands.</p>
+        </div>
+        <div class="why-card reveal">
+            <div class="num">03</div>
+            <h4>Multi-Market Systems</h4>
+            <p>DHL across 12+ European markets with self-led localisation. Rituals across seasonal campaigns. I build systems that scale without losing coherence.</p>
+        </div>
+        <div class="why-card reveal">
+            <div class="num">04</div>
+            <h4>Santa Clara Ready</h4>
+            <p>My partner lives in San Francisco and I'm in the Bay Area regularly / including right now. Relocation isn't a hypothetical. Helsinki, Amsterdam, California / I go where the work is.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ── CASE / DHL ── -->
+<section class="case-section" id="caseSection">
+    <div class="section-label reveal-left">Case Study / DHL</div>
+    <h2 class="reveal-left">Data to design<br>to localisation.</h2>
+    <p class="reveal">At agency level for DHL, I handled the full pipeline / from data-driven campaign design to personally localising assets across European markets on tight deadlines.</p>
+    <div class="case-cards">
+        <div class="case-card reveal">
+            <h4>Data-Driven Design</h4>
+            <p>Campaign visuals built from demographic personas and performance data. Every design decision backed by market-specific results.</p>
+        </div>
+        <div class="case-card reveal">
+            <h4>Self-Led Localisation</h4>
+            <p>Personally adapted campaign assets for multiple European markets / layouts, copy, typography adjusted for each language and region.</p>
+        </div>
+        <div class="case-card reveal">
+            <h4>Rituals / Hammam</h4>
+            <p>Designed the Hammam campaign at Rituals which achieved the highest sales in the product's history. Bold creative with multi-channel delivery.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ── EXPERIENCE ── -->
+<section class="exp-section" id="expSection">
+    <div class="section-label reveal-left">Experience</div>
+    <h2 class="reveal-left">Rendering since 2013.</h2>
+    <div class="exp-grid">
+        <div class="exp-row reveal">
+            <div class="exp-year">2024</div>
+            <div>
+                <div class="exp-role">Senior Graphic Designer (Agency)</div>
+                <div class="exp-company">DHL / Multi-Market Campaigns</div>
+                <div class="exp-desc">Data-driven campaign design with self-led localisation across European markets.</div>
+            </div>
+        </div>
+        <div class="exp-row reveal">
+            <div class="exp-year">2022 — 2024</div>
+            <div>
+                <div class="exp-role">Visual Specialist</div>
+                <div class="exp-company">Rituals Cosmetics / Amsterdam</div>
+                <div class="exp-desc">DTP, graphic design, seasonal campaigns across digital, packaging, and retail.</div>
+            </div>
+        </div>
+        <div class="exp-row reveal">
+            <div class="exp-year">2022</div>
+            <div>
+                <div class="exp-role">Creative / DTP</div>
+                <div class="exp-company">HelloFresh / Amsterdam</div>
+                <div class="exp-desc">High-volume production, DTP, graphic design, team leading, project management.</div>
+            </div>
+        </div>
+        <div class="exp-row reveal">
+            <div class="exp-year">2019 — 2020</div>
+            <div>
+                <div class="exp-role">Graphic Artist</div>
+                <div class="exp-company">IKEA Group</div>
+                <div class="exp-desc">DTP and graphic design for retail campaigns.</div>
+            </div>
+        </div>
+        <div class="exp-row reveal">
+            <div class="exp-year">2019</div>
+            <div>
+                <div class="exp-role">Art Director</div>
+                <div class="exp-company">Valve / Helsinki</div>
+                <div class="exp-desc">Art direction, DTP, graphic design.</div>
+            </div>
+        </div>
+        <div class="exp-row reveal">
+            <div class="exp-year">2013 — 2019</div>
+            <div>
+                <div class="exp-role">Graphic Designer / DTP</div>
+                <div class="exp-company">Planex, Pixmill, Cocomms, Lönnberg, Multiprint</div>
+                <div class="exp-desc">Print production, prepress, and hands-on graphic design across agencies and print houses.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section class="skills-section">
+    <div class="section-label reveal">Tools & Systems</div>
+    <div class="skills-grid" id="skillsGrid">
+        <div class="skill-chip">Photoshop</div>
+        <div class="skill-chip">Illustrator</div>
+        <div class="skill-chip">InDesign</div>
+        <div class="skill-chip">After Effects</div>
+        <div class="skill-chip">Premiere Pro</div>
+        <div class="skill-chip">Figma</div>
+        <div class="skill-chip">Midjourney</div>
+        <div class="skill-chip">ChatGPT</div>
+        <div class="skill-chip">AI Tools</div>
+        <div class="skill-chip">Motion Design</div>
+        <div class="skill-chip">Video Editing</div>
+        <div class="skill-chip">Brand Systems</div>
+        <div class="skill-chip">Typography</div>
+        <div class="skill-chip">Art Direction</div>
+        <div class="skill-chip">Print / DTP</div>
+        <div class="skill-chip">Localisation</div>
+        <div class="skill-chip">Social Content</div>
+        <div class="skill-chip">HTML / CSS</div>
+    </div>
+</section>
+
+<!-- ── INFO ── -->
+<div class="info-bar">
+    <div class="info-item reveal">
+        <div class="info-label">Location</div>
+        <div class="info-value">Amsterdam, NL</div>
+        <div class="info-sub">Ready to relocate to Santa Clara / SF Bay</div>
+    </div>
+    <div class="info-item reveal">
+        <div class="info-label">Languages</div>
+        <div class="info-value">Fluent English, Native Finnish</div>
+        <div class="info-sub">International team experience</div>
+    </div>
+    <div class="info-item reveal">
+        <div class="info-label">Education</div>
+        <div class="info-value">Bachelor of Culture and Arts</div>
+        <div class="info-sub">Graphic Design / Helsinki</div>
+    </div>
+</div>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+    <h2 class="reveal"><span class="rgb-glow">Power</span><br>the brand.</h2>
+    <p class="reveal">Ready to bring systems thinking, AI-native workflow, and 8+ years of craft to NVIDIA's visual identity.</p>
+    <a href="mailto:jan.lonnqvist@windowslive.com" class="cta-btn reveal">Get in Touch</a>
+</section>
+
+<footer>
+    <span>Jan Lönnqvist / 2026</span>
+    <span>jan.lonnqvist@windowslive.com</span>
+</footer>
+
+<script>
+// ── PARTICLE CANVAS ──
+const pCanvas = document.getElementById('particleCanvas');
+const pCtx = pCanvas.getContext('2d');
+let particles = [];
+
+function resizeParticles() {
+    pCanvas.width = window.innerWidth;
+    pCanvas.height = window.innerHeight;
+}
+resizeParticles();
+window.addEventListener('resize', resizeParticles);
+
+// RGB color cycling helper
+function rgbColor(offset) {
+    const t = (Date.now() * 0.001 + offset) % 6;
+    if (t < 1) return [255, t * 255, 0];
+    if (t < 2) return [255 - (t-1)*255, 255, 0];
+    if (t < 3) return [0, 255, (t-2)*255];
+    if (t < 4) return [0, 255 - (t-3)*255, 255];
+    if (t < 5) return [(t-4)*255, 0, 255];
+    return [255, 0, 255 - (t-5)*255];
+}
+
+for (let i = 0; i < 60; i++) {
+    particles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        size: 1 + Math.random() * 2,
+        colorOffset: Math.random() * 6,
+    });
+}
+
+let mouseX = 0, mouseY = 0;
+document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+function drawParticles() {
+    pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+
+    particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > pCanvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > pCanvas.height) p.vy *= -1;
+
+        // Mouse attraction
+        const dx = mouseX - p.x;
+        const dy = mouseY - p.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 200 && dist > 1) {
+            p.vx += dx * 0.00005;
+            p.vy += dy * 0.00005;
+        }
+        p.vx *= 0.999;
+        p.vy *= 0.999;
+
+        const [r, g, b] = rgbColor(p.colorOffset);
+        pCtx.beginPath();
+        pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        pCtx.fillStyle = `rgba(${r},${g},${b},0.4)`;
+        pCtx.fill();
+    });
+
+    // Connections
+    for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < 140) {
+                const [r, g, b] = rgbColor(particles[i].colorOffset);
+                const alpha = (1 - dist / 140) * 0.1;
+                pCtx.beginPath();
+                pCtx.moveTo(particles[i].x, particles[i].y);
+                pCtx.lineTo(particles[j].x, particles[j].y);
+                pCtx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+                pCtx.lineWidth = 0.5;
+                pCtx.stroke();
+            }
+        }
+    }
+
+    requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// ── SMOOTH SCROLL TRACKING ──
+let smoothSy = 0, targetSy = 0, scrollVelocity = 0, prevSy = 0;
+window.addEventListener('scroll', () => { targetSy = window.scrollY; });
+
+// ── MARQUEE SCROLL-REACTIVE ──
+const m1 = document.getElementById('marquee1');
+const m2 = document.getElementById('marquee2');
+let m1Offset = 0, m2Offset = 0;
+
+function mainLoop() {
+    requestAnimationFrame(mainLoop);
+
+    smoothSy += (targetSy - smoothSy) * 0.1;
+    scrollVelocity = smoothSy - prevSy;
+    prevSy = smoothSy;
+
+    // Marquees react to scroll
+    const absVel = Math.abs(scrollVelocity);
+    m1Offset -= 1.2 + absVel * 0.6;
+    m2Offset += 0.8 + absVel * 0.4;
+
+    if (m1) {
+        m1.style.transform = `translateX(${m1Offset % (m1.scrollWidth / 2)}px)`;
+        m1.style.animation = 'none';
+    }
+    if (m2) {
+        m2.style.transform = `translateX(${m2Offset % (m2.scrollWidth / 2)}px)`;
+        m2.style.animation = 'none';
+    }
+
+    // Particle canvas fade with scroll
+    pCanvas.style.opacity = Math.max(0.1, 1 - smoothSy * 0.001);
+}
+mainLoop();
+
+// ── REVEAL OBSERVER ──
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+            setTimeout(() => entry.target.classList.add('visible'), i * 60);
+            revealObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.reveal, .reveal-left').forEach(el => revealObserver.observe(el));
+
+// ── SKILL CHIPS STAGGER ──
+const skillsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const chips = entry.target.querySelectorAll('.skill-chip');
+            chips.forEach((chip, i) => {
+                chip.style.opacity = '0';
+                chip.style.transform = 'translateY(12px) scale(0.95)';
+                chip.style.transition = `opacity 0.4s ${i * 0.03}s, transform 0.4s ${i * 0.03}s cubic-bezier(0.16, 1, 0.3, 1)`;
+                setTimeout(() => {
+                    chip.style.opacity = '1';
+                    chip.style.transform = 'translateY(0) scale(1)';
+                }, 10);
+            });
+            skillsObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.2 });
+document.querySelectorAll('.skills-grid').forEach(g => skillsObserver.observe(g));
+</script>
+
+</body>
+</html>
